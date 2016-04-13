@@ -12,11 +12,11 @@ CLFlAG =  $(LIB_OPENCV)
 
 all: ESRTest ESRTrain
 
-ESRTest: ESRTest.o ESRRegressor.o
-	$(CC) $(CLFlAG) -o ESRTest ESRTest.o ESRRegressor.o
+ESRTest: ESRTest.o ESRRegressor.o ESRUtils.o
+	$(CC) $(CLFlAG) -o ESRTest ESRTest.o ESRRegressor.o ESRUtils.o
 
-ESRTrain: ESRTrain.o ESRRegressor.o $(CLFlAG )
-	$(CC) $(CLFlAG) -o ESRTrain ESRTrain.o ESRRegressor.o
+ESRTrain: ESRTrain.o ESRRegressor.o ESRUtils.o $(CLFlAG )
+	$(CC) $(CLFlAG) -o ESRTrain ESRTrain.o ESRRegressor.o ESRUtils.o
 
 ESRTest.o: ESRTest.cpp
 	$(CC) $(CCFLAG) ESRTest.cpp
@@ -24,8 +24,11 @@ ESRTest.o: ESRTest.cpp
 ESRTrain.o: ESRTrain.cpp
 	$(CC) $(CCFLAG) ESRTrain.cpp
 
-ESRRegressor.o: ESRRegressor.cpp
-	$(CC) $(CCFLAG) ESRRegressor.cpp
+ESRRegressor.o: ESRRegressor.cpp ESRRegressor.hpp
+	$(CC) $(CCFLAG) ESRRegressor.cpp 
+
+ESRUtils.o: ESRUtils.cpp ESRUtils.hpp
+	$(CC) $(CCFLAG) ESRUtils.cpp
 
 clean: 
 	rm -f *.o

@@ -3,7 +3,11 @@
 
 using namespace cv;
 
+#include "ESRUtils.hpp"
+
 int main()
 {
 	std::cout << "ESRTest" << std::endl;
+
+	return 1;
 }
