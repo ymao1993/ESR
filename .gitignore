@@ -1,5 +1,6 @@
 ESRTrain
 ESRTest
+data/model.txt
 
 # Compiled Object files
 *.slo
