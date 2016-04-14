@@ -1,6 +1,7 @@
 ESRTrain
 ESRTest
 data/model.txt
+data/COFW_Dataset
 
 # Compiled Object files
 *.slo

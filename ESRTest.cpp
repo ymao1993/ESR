@@ -5,6 +5,10 @@ using namespace cv;
 
 #include "ESRRegressor.hpp"
 
+#include "ESRUtils.hpp"
+
+void dispTrainingImages();
+
 int main()
 {
 	std::cout << "ESRTest" << std::endl;
@@ -17,4 +21,14 @@ int main()
 	
 
 	return 1;
+}
+
+void dispTrainingImages()
+{
+	ESR::Regressor regressor;
+	regressor.loadModel("data/model.txt");
+	for(int i=0; i < regressor.trainingBboxes.size(); i++)
+	{
+		ESR::dispImgWithDetectionAndLandmarks("./data/COFW_Dataset/trainingImages/" + std::to_string(i+1) + ".jpg", regressor.trainingShapes[i], regressor.trainingBboxes[i],  true);
+	}
 }
