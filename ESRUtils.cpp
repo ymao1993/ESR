@@ -44,6 +44,15 @@ namespace ESR
 		return;
 	}
 
+	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool autoClose)
+	{
+		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+
+		dispImg(mat, autoClose);
+
+		return;
+	}
+
 	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool autoClose)
 	{
 		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
@@ -53,10 +62,19 @@ namespace ESR
 			std::cout << "[Error](dispImgWithDetection): cannot read image from '" << filename << "'" << std::endl;
 			return;
 		}
+		dispImgWithDetection(mat,bbox,autoClose);
 
-		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+		return;
+	}
 
+	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool autoClose)
+	{
+		for(int i=0; i<landmarks.rows; i++)
+		{
+			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
+		}
 		dispImg(mat, autoClose);
+
 		return;
 	}
 
@@ -70,24 +88,13 @@ namespace ESR
 			return;
 		}
 
-		for(int i=0; i<landmarks.rows; i++)
-		{
-			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
-		}
-		dispImg(mat, autoClose);
+		dispImgWithLandmarks(mat, landmarks, autoClose);
+
 		return;		
 	}
 
-	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose)
+	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose)
 	{
-		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
-
-		if(mat.data == NULL)
-		{
-			std::cout << "[Error](dispImgWithDetectionAndLandmarks): cannot read image from '" << filename << "'" << std::endl;
-			return;
-		}
-
 		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
 		for(int i=0; i<landmarks.rows; i++)
 		{
@@ -95,6 +102,18 @@ namespace ESR
 		}
 		
 		dispImg(mat, autoClose);
+		return;		
+	}
+
+	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose)
+	{
+		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
+		if(mat.data == NULL)
+		{
+			std::cout << "[Error](dispImgWithDetectionAndLandmarks): cannot read image from '" << filename << "'" << std::endl;
+			return;
+		}
+		dispImgWithDetectionAndLandmarks(filename,landmarks,bbox,autoClose);
 		return;		
 	}
 
@@ -108,47 +127,46 @@ namespace ESR
 		return;
 	}
 
-	cv::Mat readImgGray(const std::string& filename)
+	void readImgGray(const std::string& filename, cv::Mat& result)
 	{
-		Mat mat = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-		if(mat.data == NULL)
+		result = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+		if(result.data == NULL)
 		{
 			std::cout << "[Error](readImgGray): cannot read image from '" << filename << "'" << std::endl;
 		}
-		return mat;
+		return;
 	}
 
-	cv::Mat TransformBBox2Image(const cv::Mat& shape, const Bbox& bbox)
+	void transformBBox2Image(const cv::Mat& shape, const Bbox& bbox, cv::Mat& result)
 	{
-		Mat result;
 		shape.copyTo(result);
 
 		for (int i=0; i<result.rows; i++)
 		{
-			result.row(i).at<double>(i,0) = result.row(i).at<double>(i,0) * bbox.w + bbox.sx;
-			result.row(i).at<double>(i,1) = result.row(i).at<double>(i,0) * bbox.h + bbox.sy;
+			result.row(i).at<double>(0) = result.row(i).at<double>(0) * (bbox.w / 2.0) + bbox.cx;
+			result.row(i).at<double>(1) = result.row(i).at<double>(1) * (bbox.h / 2.0) + bbox.cy;
 		}
-
-		return result;
+		return;
 	}
 
-	cv::Mat TransformImage2BBox(const cv::Mat& shape, const Bbox& bbox)
+	void transformImage2BBox(const cv::Mat& shape, const Bbox& bbox, cv::Mat& result)
 	{
-		Mat result;
+
 		shape.copyTo(result);
 
 		for (int i=0; i<result.rows; i++)
 		{
-			result.row(i).at<double>(i,0) = (result.row(i).at<double>(i,0) - bbox.sx)/bbox.w;
-			result.row(i).at<double>(i,1) = (result.row(i).at<double>(i,0) - bbox.sy)/bbox.h;
+			result.row(i).at<double>(0) = (result.row(i).at<double>(0) - bbox.cx)/(bbox.w/2.0);
+			result.row(i).at<double>(1) = (result.row(i).at<double>(1) - bbox.cy)/(bbox.h/2.0);
 		}
-		
-		return result;
+		return;
 	}
 
-	cv::Mat ProjectBbox2Bbox(const cv::Mat& shape1, Bbox bbox1, Bbox bbox2)
+	void projectBbox2Bbox(const cv::Mat& shape1, Bbox bbox1, Bbox bbox2, cv::Mat& result)
 	{
-		return TransformBBox2Image(TransformImage2BBox(shape1,bbox1),bbox2);
+		transformImage2BBox(shape1,bbox1, result);
+		transformBBox2Image(result, bbox2, result);
+		return;
 	}
 
 	double pearsonCorrelation(const cv::Mat& vec1, const cv::Mat& vec2)
@@ -171,5 +189,49 @@ namespace ESR
 		return correlation;
 	}
 
+	//compute the similarity transformation from shape1 to shape2
+	void similarityTransform(const Mat& shape1, 
+							 const Mat& shape2, 
+							 RSTransform& transform)
+	{
+	    transform.rotation = Mat::zeros(2,2,CV_64FC1);
+	    transform.scale = 0;
+	    
+	    // center the data
+	    double centerx1 = mean(shape1.col(0))[0]; 	double centery1 = mean(shape1.col(1))[0];
+	    double centerx2 = mean(shape2.col(0))[0];	double centery2 = mean(shape2.col(1))[0];
+	    Mat x1,y1,x2,y2;
+	    shape1.col(0).copyTo(x1);	shape1.col(1).copyTo(y1);
+	    shape2.col(0).copyTo(x2);	shape2.col(1).copyTo(y2);
+	    x1 -= centerx1;	y1 -= centery1;
+	    x2 -= centerx2;	y2 -= centery2;
 
+	    //compute a and b
+	    double tmp = (x1.dot(x1) + y1.dot(y1));
+	    double a   = (x1.dot(x2) + y1.dot(y2))/tmp;
+	    double b   = (x1.dot(y2) - y1.dot(x2))/tmp;
+
+	    //compute rotation and scaling
+	    transform.scale = std::sqrt(a*a+b*b);
+	    transform.rotation.create(2,2,CV_64F);
+	    transform.rotation.at<double>(0,0) = a;	transform.rotation.at<double>(0,1) = -b;
+	    transform.rotation.at<double>(1,0) = b;	transform.rotation.at<double>(1,1) = a;
+
+	    return;
+	}
+
+	void applyTransform(const cv::Mat& shape, const RSTransform& transform, cv::Mat& result)
+	{
+		Mat rotationT;
+		transpose(transform.rotation, rotationT);
+		result = transform.scale * shape * rotationT;
+		return;
+	}
+
+	void applyTransform(double x, double y, const RSTransform& transform, double& resultx, double& resulty)
+	{
+		resultx = (transform.rotation.at<double>(0,0) * x + transform.rotation.at<double>(0,1) * y) * transform.scale;
+		resulty = (transform.rotation.at<double>(1,0) * x + transform.rotation.at<double>(1,1) * y) * transform.scale;
+		return;
+	}
 }

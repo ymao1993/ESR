@@ -19,9 +19,13 @@ namespace ESR
 	 */
 	void dispImg(const cv::Mat& mat, bool autoClose = false);
 	void dispImg(const std::string& filename, bool autoClose = false);
+	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool autoClose = false);
 	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool autoClose = false);
+	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool autoClose);
 	void dispImgWithLandmarks(const std::string& filename, const cv::Mat& landmarks, bool autoClose);
+	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose);
 	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose);
+
 	/**
 	 * safe wrapper of image write function
 	 */
@@ -30,7 +34,7 @@ namespace ESR
 	/**
 	 * read file as gray scale image
 	 */
-	cv::Mat readImgGray(const std::string& filename);
+	void readImgGray(const std::string& filename, cv::Mat& result);
 
 	/**
 	 * compute Pearson Correlation between the two vectors
@@ -40,12 +44,12 @@ namespace ESR
 	/**
 	 * transform the coordates from bbox's normalized space to image space
 	 */
-	cv::Mat TransformBBox2Image(const cv::Mat& shape, const Bbox& bbox);
+	void transformBBox2Image(const cv::Mat& shape, const Bbox& bbox, cv::Mat& result);
 
 	/**
 	 * transform the coordates from image space to tbbox's normalized space
 	 */
-	cv::Mat TransformImage2BBox(const cv::Mat& shape, const Bbox& bbox);
+	void transformImage2BBox(const cv::Mat& shape, const Bbox& bbox, cv::Mat& result);
 
 	/**
 	 * project the shape from image1's bbox into image2's bbox
@@ -55,9 +59,37 @@ namespace ESR
 	 * @param bbox2  the bounding box where shape1 is going to be projected to
 	 * @return projected shape1's landmarks' coordinate in image space
 	 */
-	cv::Mat ProjectBbox2Bbox(const cv::Mat& shape1, Bbox bbox1, Bbox bbox2);
+	void projectBbox2Bbox(const cv::Mat& shape1, Bbox bbox1, Bbox bbox2, cv::Mat& result);
 
 
+	struct RSTransform
+	{
+		cv::Mat  rotation;
+		double   scale;
+	};
+
+	/**
+	 * compute the similarity transform to project shape1 to shape2
+	 * 
+	 * Note: we only compute the rotation and scaling component, because translation
+	 * it not needed in our algorithm.
+	 *
+	 * @param shape1 src shape
+	 * @param shape2 dest shape
+	 * @param rotation 2x2 rotation matrix
+	 * @param scale scale
+	 */
+	void similarityTransform(const cv::Mat& shape1, const cv::Mat& shape2, RSTransform& transform);
+
+	/**
+	 * Apply ratation and scaling to shape
+	 */
+	void applyTransform(const cv::Mat& shape, const RSTransform& transform, cv::Mat& result);
+
+	/**
+	 * Apply ratation and scaling to shape
+	 */
+	void applyTransform(double x, double y, const RSTransform& transform, double& resultx, double& resulty);
 
 }
 

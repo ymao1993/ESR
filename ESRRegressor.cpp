@@ -3,12 +3,25 @@
 #include <fstream>
 #include <iostream>
 
+#include "ESRUtils.hpp"
+
 namespace ESR
 {
-	Mat Regressor::regress(Mat image, Bbox bbox, Mat S0)
+	void Regressor::predict(const Mat& image, Bbox bbox, Mat& shape)
 	{
-		Mat result;
-		return result;
+		//use mean shape as initial shape
+		Mat cur = meanShape.clone();
+		for(int i=0; i<numRegressor; i++)
+		{
+			//compute delta shape
+			Mat deltaShape;
+			regressors[i].predict(image, bbox, cur, meanShape, deltaShape);
+
+			//update current shape
+			cur += deltaShape;
+		}
+		transformBBox2Image(cur, bbox, shape);
+		return;
 	}
 
 	void Regressor::loadModel(std::string filepath)
@@ -34,8 +47,7 @@ namespace ESR
 		fin >> numLandmark;
 
 		//mean shape
-		meanShape = Mat::zeros(numLandmark,2,CV_32F);
-
+		meanShape = Mat::zeros(numLandmark,2,CV_64F);
 		for(int i = 0; i< numLandmark; i++)
 		{
 			fin >> meanShape.at<double>(i,0) >> meanShape.at<double>(i,1);
@@ -51,7 +63,7 @@ namespace ESR
 			//training bbox
 			double sx,sy,w,h,cx,cy;
 			fin >> sx >> sy >> w >> h >> cx >> cy;
-			trainingBboxes[i] =Bbox(sx,sy,cx,cy,w,h);
+			trainingBboxes[i] = Bbox(sx,sy,cx,cy,w,h);
 
 			//training shape
 			Mat shape(numLandmark, 2, CV_64F);

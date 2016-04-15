@@ -4,6 +4,9 @@
 #include <fstream>
 #include <vector>
 #include "ESRFern.hpp"
+#include "ESRBbox.hpp"
+#include <opencv2/core/core.hpp>
+
 
 namespace ESR
 {
@@ -11,6 +14,7 @@ namespace ESR
 	{
 	public:
 		void loadModel(std::ifstream& fin);
+		void predict(const cv::Mat& image, Bbox bbox, const Mat& curShape, const Mat& meanShape, cv::Mat& shape);
 
 	private:
 		int numRegressor;

@@ -3,8 +3,11 @@
 
 #include <fstream>
 #include <vector>
-
 #include <opencv2/core/core.hpp>
+
+#include "ESRBbox.hpp"
+#include "ESRUtils.hpp"
+
 using namespace cv;
 
 namespace ESR
@@ -13,6 +16,7 @@ namespace ESR
 	{
 	public:
 		void loadModel(std::ifstream& fin);
+		void predict(const cv::Mat& image, Bbox bbox, const RSTransform& t, const Mat& curShape, cv::Mat& deltaShape);
 
 	private:
 		//number of fern feature, bin
@@ -25,10 +29,12 @@ namespace ESR
 		Mat featurePositions;
 
 		//threasholds for each feature
-		Mat binThresholds;
+		Mat featureThresholds;
 
 		//output table
 		std::vector<Mat> output;
+
+		double extractFeature(int featureIdx, const Mat& image, const Bbox& bbox, const Mat& curShape, const RSTransform& t);
 	};
 }
 

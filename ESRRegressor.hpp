@@ -29,9 +29,10 @@ namespace ESR
 		void loadModel(std::ifstream& fin);
 
 		/**
-		 * predict landmark positions by applying regression
+		 * predict landmark positions using the trained model
+		 * @ret the predicted landmark position (numLandMark x n matrix)
 		 */
-		Mat regress(Mat image, Bbox bbox, Mat S0);
+		void predict(const Mat& image, Bbox bbox, Mat& shape);
 
 #ifndef DEBUG_MODE
 	private:
