@@ -17,14 +17,14 @@ namespace ESR
 	/**
 	 * display the image by always opening a new window and wait for key to close.
 	 */
-	void dispImg(const cv::Mat& mat, bool autoClose = false);
-	void dispImg(const std::string& filename, bool autoClose = false);
-	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool autoClose = false);
-	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool autoClose = false);
-	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool autoClose);
-	void dispImgWithLandmarks(const std::string& filename, const cv::Mat& landmarks, bool autoClose);
-	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose);
-	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose);
+	void dispImg(const cv::Mat& mat, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImg(const std::string& filename, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithLandmarks(const std::string& filename, const cv::Mat& landmarks, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
 
 	/**
 	 * safe wrapper of image write function

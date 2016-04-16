@@ -8,9 +8,9 @@ using namespace cv;
 
 namespace ESR
 {
-	void dispImg(const Mat& mat, bool autoClose)
+	void dispImg(const Mat& mat, bool closeByKey, bool alwaysNewWindow)
 	{
-		const static std::string titlePrefix = "dispImg ";
+		const static std::string titlePrefix = "dispImg";
 		static int idx = 0;
 
 		if(mat.data == NULL)
@@ -19,18 +19,18 @@ namespace ESR
 			return;
 		}
 		idx ++;
-		std::string windowName = titlePrefix + std::to_string(idx);
-		namedWindow(windowName, WINDOW_AUTOSIZE);
+		std::string windowName = alwaysNewWindow?titlePrefix + std::to_string(idx):titlePrefix;
+		if(alwaysNewWindow) namedWindow(windowName, WINDOW_AUTOSIZE);
 		imshow(windowName, mat);
-		waitKey(0);
-		if(autoClose)
+		if(closeByKey)
 		{
+			waitKey(0);
 			destroyWindow(windowName);
 		}
 		return;
 	}
 
-	void dispImg(const std::string& filename, bool autoClose)
+	void dispImg(const std::string& filename, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -40,20 +40,20 @@ namespace ESR
 			return;
 		}		
 
-		dispImg(mat, autoClose);
+		dispImg(mat, closeByKey, alwaysNewWindow);
 		return;
 	}
 
-	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool autoClose)
+	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
 
-		dispImg(mat, autoClose);
+		dispImg(mat, closeByKey, alwaysNewWindow);
 
 		return;
 	}
 
-	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool autoClose)
+	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -62,23 +62,23 @@ namespace ESR
 			std::cout << "[Error](dispImgWithDetection): cannot read image from '" << filename << "'" << std::endl;
 			return;
 		}
-		dispImgWithDetection(mat,bbox,autoClose);
+		dispImgWithDetection(mat,bbox,closeByKey, alwaysNewWindow);
 
 		return;
 	}
 
-	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool autoClose)
+	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey, bool alwaysNewWindow)
 	{
 		for(int i=0; i<landmarks.rows; i++)
 		{
 			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
 		}
-		dispImg(mat, autoClose);
+		dispImg(mat, closeByKey, alwaysNewWindow);
 
 		return;
 	}
 
-	void dispImgWithLandmarks(const std::string& filename, const Mat& landmarks, bool autoClose)
+	void dispImgWithLandmarks(const std::string& filename, const Mat& landmarks, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -88,12 +88,12 @@ namespace ESR
 			return;
 		}
 
-		dispImgWithLandmarks(mat, landmarks, autoClose);
+		dispImgWithLandmarks(mat, landmarks, closeByKey, alwaysNewWindow);
 
 		return;		
 	}
 
-	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose)
+	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
 		for(int i=0; i<landmarks.rows; i++)
@@ -101,11 +101,11 @@ namespace ESR
 			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
 		}
 		
-		dispImg(mat, autoClose);
+		dispImg(mat, closeByKey, alwaysNewWindow);
 		return;		
 	}
 
-	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool autoClose)
+	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat mat = imread(filename, CV_LOAD_IMAGE_UNCHANGED);
 		if(mat.data == NULL)
@@ -113,7 +113,7 @@ namespace ESR
 			std::cout << "[Error](dispImgWithDetectionAndLandmarks): cannot read image from '" << filename << "'" << std::endl;
 			return;
 		}
-		dispImgWithDetectionAndLandmarks(filename,landmarks,bbox,autoClose);
+		dispImgWithDetectionAndLandmarks(mat,landmarks,bbox,closeByKey, alwaysNewWindow);
 		return;		
 	}
 

@@ -11,11 +11,11 @@ CLFlAG =  $(LIB_OPENCV)
 
 all: ESRTest ESRTrain
 
-ESRTest:  ESRTest.o  ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o
-	$(CC) $(CLFlAG) -o ESRTest  ESRTest.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o
+ESRTest:  ESRTest.o  ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o ESRFaceDetector.o
+	$(CC) $(CLFlAG) -o ESRTest  ESRTest.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o ESRFaceDetector.o
 
-ESRTrain: ESRTrain.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o
-	$(CC) $(CLFlAG) -o ESRTrain ESRTrain.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o
+ESRTrain: ESRTrain.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o ESRFaceDetector.o
+	$(CC) $(CLFlAG) -o ESRTrain ESRTrain.o ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o ESRFaceDetector.o
 
 ESRTest.o: ESRTest.cpp
 	$(CC) $(CCFLAG) ESRTest.cpp
@@ -34,6 +34,9 @@ ESRFern.o: ESRFern.cpp ESRFern.hpp
 
 ESRBbox.o: ESRBbox.cpp ESRBbox.hpp
 	$(CC) $(CCFLAG) ESRBbox.cpp
+
+ESRFaceDetector.o: ESRFaceDetector.cpp ESRFaceDetector.hpp
+	$(CC) $(CCFLAG) ESRFaceDetector.cpp
 
 ESRUtils.o: ESRUtils.cpp ESRUtils.hpp
 	$(CC) $(CCFLAG) ESRUtils.cpp

@@ -29,7 +29,6 @@ namespace ESR
 			regressors[i].predict(image, bbox, t, curShape, deltadeltaShape);
 			deltaShape += deltadeltaShape;
 		}
-
 		return;
 	}
 }
