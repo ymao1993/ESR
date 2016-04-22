@@ -9,7 +9,7 @@ CCFLAG = -c -Wall -std=c++11 -O3 -I $(INCLUDE_PATH)
 LIB_OPENCV =  -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video -lopencv_objdetect
 LDFlAG =  $(LIB_OPENCV)
 
-OBJFILES = ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRBbox.o ESRFaceDetector.o
+OBJFILES = ESRRegressor.o ESRUtils.o ESRCascadedFerns.o ESRFern.o ESRFaceDetector.o
 
 all: ESRTest ESRTrain
 

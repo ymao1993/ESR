@@ -6,7 +6,9 @@
 #include "ESRBbox.hpp"
 #include "ESRCascadedFerns.hpp"
 
+#include <vector>
 #include <fstream>
+
 
 #define DEBUG_MODE
 
@@ -29,10 +31,25 @@ namespace ESR
 		void loadModel(std::ifstream& fin);
 
 		/**
+		 * store model to file
+		 */
+		void storeModel(std::string filepath);
+
+		/**
+		 * store model to stream
+		 */
+		void storeModel(std::ofstream& fout);
+
+		/**
 		 * predict landmark positions using the trained model
 		 * @ret the predicted landmark position (numLandMark x n matrix)
 		 */
 		void predict(const Mat& image, Bbox bbox, Mat& shape);
+
+		/**
+		 * train the ESR model
+		 */
+		void train(const std::vector<Mat>& images, const std::vector<Bbox>& bbox, const std::vector<Mat>& shape);
 
 #ifndef DEBUG_MODE
 	private:

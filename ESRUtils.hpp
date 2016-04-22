@@ -6,6 +6,7 @@
 #define ESRUTILS_H
 #include <opencv2/core/core.hpp>
 #include <string>
+#include <fstream>
 
 #include "ESRBbox.hpp"
 
@@ -19,11 +20,11 @@ namespace ESR
 	 */
 	void dispImg(const cv::Mat& mat, bool closeByKey = false, bool alwaysNewWindow = true);
 	void dispImg(const std::string& filename, bool closeByKey = false, bool alwaysNewWindow = true);
-	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetection(const cv::Mat& mat, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
 	void dispImgWithDetection(const std::string& filename, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
-	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithLandmarks(const cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey = false, bool alwaysNewWindow = true);
 	void dispImgWithLandmarks(const std::string& filename, const cv::Mat& landmarks, bool closeByKey = false, bool alwaysNewWindow = true);
-	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
+	void dispImgWithDetectionAndLandmarks(const cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
 	void dispImgWithDetectionAndLandmarks(const std::string& filename, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey = false, bool alwaysNewWindow = true);
 
 	/**
@@ -40,6 +41,11 @@ namespace ESR
 	 * compute Pearson Correlation between the two vectors
 	 */
 	double pearsonCorrelation(const cv::Mat& vec1, const cv::Mat& vec2);
+
+	/**
+	 * compute covariance between two vectors
+	 */
+	double computeCovariance(const cv::Mat& vec1, const cv::Mat& vec2);
 
 	/**
 	 * transform the coordates from bbox's normalized space to image space
@@ -90,6 +96,21 @@ namespace ESR
 	 * Apply ratation and scaling to shape
 	 */
 	void applyTransform(double x, double y, const RSTransform& transform, double& resultx, double& resulty);
+
+	/**
+	 * store value to file
+	 */
+	inline void storeVal(std::ofstream& fout, double val)
+	{
+		fout << val << " ";
+		return;
+	}
+
+	/**
+	 * compute mean shape from a set of shapes
+	 * @param shapes: shapes defined in image space
+	 */
+	void computeMeanShape(const std::vector<cv::Mat>& shapes, const std::vector<Bbox>& bboxes, cv::Mat& meanShape);
 
 }
 

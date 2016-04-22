@@ -16,7 +16,9 @@ namespace ESR
 	{
 	public:
 		void loadModel(std::ifstream& fin);
+		void storeModel(std::ofstream& fout);
 		void predict(const cv::Mat& image, Bbox bbox, const RSTransform& t, const Mat& curShape, cv::Mat& deltaShape);
+		vector<Mat> train(const Mat& target, const Mat& densities, const Mat& covariance, const Mat& candidatePositions, const std::vector<int>& candidateLandmarks);
 
 	private:
 		//number of fern feature, bin
@@ -27,6 +29,7 @@ namespace ESR
 		int numLandmark;
 		Mat featureLandmarks;
 		Mat featurePositions;
+		Mat featurePixelIdx;
 
 		//threasholds for each feature
 		Mat featureThresholds;

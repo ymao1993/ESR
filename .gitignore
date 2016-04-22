@@ -1,7 +1,8 @@
 ESRTrain
 ESRTest
-data/model.txt
+data/myModel.txt
 data/COFW_Dataset
+data/old
 *.d
 
 # Compiled Object files

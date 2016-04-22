@@ -44,11 +44,12 @@ namespace ESR
 		return;
 	}
 
-	void dispImgWithDetection(cv::Mat& mat, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
+	void dispImgWithDetection(const cv::Mat& mat, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
-		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+		Mat temp = mat.clone();
+		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
 
-		dispImg(mat, closeByKey, alwaysNewWindow);
+		dispImg(temp, closeByKey, alwaysNewWindow);
 
 		return;
 	}
@@ -67,13 +68,14 @@ namespace ESR
 		return;
 	}
 
-	void dispImgWithLandmarks(cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey, bool alwaysNewWindow)
+	void dispImgWithLandmarks(const cv::Mat& mat, const cv::Mat& landmarks, bool closeByKey, bool alwaysNewWindow)
 	{
+		Mat temp = mat.clone();
 		for(int i=0; i<landmarks.rows; i++)
 		{
-			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
+			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
 		}
-		dispImg(mat, closeByKey, alwaysNewWindow);
+		dispImg(temp, closeByKey, alwaysNewWindow);
 
 		return;
 	}
@@ -93,15 +95,15 @@ namespace ESR
 		return;		
 	}
 
-	void dispImgWithDetectionAndLandmarks(cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
+	void dispImgWithDetectionAndLandmarks(const cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
-		rectangle(mat, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+		Mat temp = mat.clone();
+		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
 		for(int i=0; i<landmarks.rows; i++)
 		{
-			circle(mat, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
+			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
 		}
-		
-		dispImg(mat, closeByKey, alwaysNewWindow);
+		dispImg(temp, closeByKey, alwaysNewWindow);
 		return;		
 	}
 
@@ -189,6 +191,14 @@ namespace ESR
 		return correlation;
 	}
 
+	double computeCovariance(const cv::Mat& vec1, const cv::Mat& vec2)
+	{
+		Mat vec1xvec2;
+		multiply(vec1, vec2, vec1xvec2);
+		double covar = mean(vec1xvec2)[0] - mean(vec1)[0] * mean(vec2)[0];
+		return covar;
+	}
+
 	//compute the similarity transformation from shape1 to shape2
 	void similarityTransform(const Mat& shape1, 
 							 const Mat& shape2, 
@@ -232,6 +242,20 @@ namespace ESR
 	{
 		resultx = (transform.rotation.at<double>(0,0) * x + transform.rotation.at<double>(0,1) * y) * transform.scale;
 		resulty = (transform.rotation.at<double>(1,0) * x + transform.rotation.at<double>(1,1) * y) * transform.scale;
+		return;
+	}
+
+	void computeMeanShape(const std::vector<Mat>& shapes, const std::vector<Bbox>& bboxes, Mat& meanShape)
+	{
+		if(shapes.size() == 0) return;
+		meanShape = Mat::zeros(shapes[0].rows, shapes[0].cols, CV_64F);
+		for(int i=0; i<shapes.size(); i++)
+		{
+			Mat normalizedShape;
+			transformImage2BBox(shapes[i], bboxes[i], normalizedShape);
+			meanShape += normalizedShape;
+		}
+		meanShape /= shapes.size();
 		return;
 	}
 }

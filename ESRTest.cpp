@@ -8,13 +8,14 @@ using namespace cv;
 #include "ESRUtils.hpp"
 #include "ESRFaceDetector.hpp"
 #include "ESRBbox.hpp"
+#include "ESRCommon.hpp"
 
 void dispTrainingImages();
 void testSimilarityTransform();
 void testApplyTransform();
 
-#define USE_TEST_IMAGE
-//#define USE_WEBCAM
+//#define USE_TEST_IMAGE
+#define USE_WEBCAM
 //#define USE_SINGLE_IMAGE
 
 int main()
@@ -23,7 +24,10 @@ int main()
 
 	//load in model
 	ESR::Regressor regressor;
-	regressor.loadModel("data/model.txt");
+	regressor.loadModel("data/myModel.txt");
+	//regressor.storeModel("data/model2.txt");
+
+	//return 0;
 
 #ifdef USE_TEST_IMAGE
 
@@ -31,7 +35,7 @@ int main()
 	std::vector<ESR::Bbox> testingBboxes;
 	std::ifstream fin;
 	fin.open("./data/COFW_Dataset/boundingbox_test.txt");
-    for(int i = 0;i < 507;i++){
+    for(int i = 0;i < TEST_IMAGE_NUM;i++){
         ESR::Bbox temp;
         fin>>temp.sx>>temp.sy>>temp.w>>temp.h;
         temp.cx = temp.sx + temp.w/2.0;
