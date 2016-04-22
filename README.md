@@ -1,11 +1,12 @@
 # ESR
 
-**_NOTE: The Development is Still in Progress_**
-
 C++ implementation of Explicit Shape Regression(ESR) algorithm.
 
+## Dataset
+We use LFPW dataset to train and test the model. Please download the data from [here](https://www.dropbox.com/s/1xl8jlyce1f4tei/lfpw.zip?dl=0) and decompress it under the `data` folder.
+
 ## Pre-trained Model
-Please find the model fire [here](https://www.dropbox.com/s/fb9ctjn1cc653vf/myModel.txt?dl=0). 
+Please download the pre-trained model for the LFPW dataset and put it under the `data` folder [here](https://www.dropbox.com/s/cbl54ja2sejacgj/myModel_LFPW.txt?dl=0). 
 
 ## Dependencies
 + OpenCV2
