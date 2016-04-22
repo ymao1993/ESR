@@ -10,13 +10,8 @@ using namespace cv;
 #include "ESRBbox.hpp"
 #include "ESRCommon.hpp"
 
-void dispTrainingImages();
 void testSimilarityTransform();
 void testApplyTransform();
-
-//#define USE_TEST_IMAGE
-#define USE_WEBCAM
-//#define USE_SINGLE_IMAGE
 
 int main()
 {
@@ -24,40 +19,64 @@ int main()
 
 	//load in model
 	ESR::Regressor regressor;
-	regressor.loadModel("data/myModel.txt");
-	//regressor.storeModel("data/model2.txt");
-
+	regressor.loadModel(MODEL_FILE_NAME);
 	//return 0;
 
 #ifdef USE_TEST_IMAGE
 
-	//Read testing image's bounding box
+	std::vector<int> inValidIdx;
+	std::vector<Mat> testImages;
 	std::vector<ESR::Bbox> testingBboxes;
+
+	//Read testing images
+	for(int i=0; i<NUM_TESTING_IMAGE; i++)
+	{
+		char imageName[100];
+		sprintf(imageName, "image_%04d.png", i+1);
+		std::string filename = std::string(TEST_IMAGE_FOLDER_NAME) + imageName;
+		Mat image = imread(filename,CV_LOAD_IMAGE_GRAYSCALE);
+		if(image.data == NULL)
+		{
+			inValidIdx.push_back(i);
+			continue;
+		}
+		testImages.push_back(image);
+	}
+
+	//Read testing image's bounding box
 	std::ifstream fin;
-	fin.open("./data/COFW_Dataset/boundingbox_test.txt");
-    for(int i = 0;i < TEST_IMAGE_NUM;i++){
+	fin.open(TEST_BBOX_FILE_NAME);
+    for(int i = 0;i < NUM_TESTING_IMAGE;i++){
+		//skip all invalid idxes
+		for(int j=0; j<inValidIdx.size(); j++)
+		{
+			if(inValidIdx[j] == i) continue;
+		}
         ESR::Bbox temp;
-        fin>>temp.sx>>temp.sy>>temp.w>>temp.h;
+        double brx, bry;
+        fin>>temp.sx>>temp.sy>>brx>>bry;
+        temp.w  = brx - temp.sx;
+        temp.h  = bry - temp.sy;
         temp.cx = temp.sx + temp.w/2.0;
-        temp.cy = temp.sy + temp.h/2.0; 
+        temp.cy = temp.sy + temp.h/2.0;
         testingBboxes.push_back(temp);
     }
     fin.close(); 
 
     //apply regression
-	for(int i=0; i<regressor.trainingBboxes.size(); i++)
+	for(int i=0; i<testImages.size(); i++)
 	{
 		std::cout << "processing image " << i+1 <<std::endl;
-		Mat image, shape;
-		ESR::readImgGray("./data/COFW_Dataset/testImages/" + std::to_string(i+1) + ".jpg", image);
-		regressor.predict(image, testingBboxes[i],shape);
-		ESR::dispImgWithDetectionAndLandmarks(image, shape, testingBboxes[i], true, true);
+
+		Mat shape;
+		regressor.predict(testImages[i], testingBboxes[i],shape);
+		ESR::dispImgWithDetectionAndLandmarks(testImages[i], shape, testingBboxes[i], true, true);
 	}
 #endif
 
 #ifdef USE_WEBCAM
 	ESR::FaceDetector faceDetector;
-	faceDetector.loadModel("data/haarcascade_frontalface_alt.xml");
+	faceDetector.loadModel(FACE_DETECTION_MODEL_FILE_NAME);
 	VideoCapture stream(0);  
 	while(1)
 	{
@@ -75,31 +94,7 @@ int main()
 	}
 #endif
 
-#ifdef USE_SINGLE_IMAGE
-	ESR::FaceDetector faceDetector;
-	faceDetector.loadModel("data/haarcascade_frontalface_alt.xml");
-	cv::Mat image, shape;
-	image = cv::imread("./data/test1.png",CV_LOAD_IMAGE_GRAYSCALE);
-	std::vector<ESR::Bbox> faces = faceDetector.detectFace(image);
-	if(faces.size() != 0) //only perform regression when there is face
-	{
-		regressor.predict(image, faces[0],shape);
-		ESR::dispImgWithDetectionAndLandmarks(image, shape, faces[0], true, true);
-	}
-#endif
-
 	return 0;
-}
-
-void dispTrainingImages()
-{
-	ESR::Regressor regressor;
-	regressor.loadModel("data/model.txt");
-	for(int i=0; i < regressor.trainingBboxes.size(); i++)
-	{
-		std::cout << "show image "<<i+1 << std::endl;
-		ESR::dispImgWithDetectionAndLandmarks("./data/COFW_Dataset/trainingImages/" + std::to_string(i+1) + ".jpg", regressor.trainingShapes[i], regressor.trainingBboxes[i], true, true);
-	}
 }
 
 

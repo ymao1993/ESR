@@ -31,9 +31,8 @@ namespace ESR
 						  const std::vector<Mat>& target_shapes)
 	{
 		std::cout << "training ESR regressor" << std::endl;
-
-		numRegressor = EXTERNAL_REGRESSOR_NUM;
-		numLandmark = LAND_MARK_NUM;
+		numRegressor = NUM_EXTERNAL_REGRESSOR;
+		numLandmark = target_shapes[0].rows;
 		trainingBboxes = bboxes;
 		trainingShapes = target_shapes;
 
@@ -77,7 +76,7 @@ namespace ESR
 		}
 
 		//cascaded training
-		regressors.resize(EXTERNAL_REGRESSOR_NUM);
+		regressors.resize(NUM_EXTERNAL_REGRESSOR);
 		for(int i=0; i<numRegressor; i++)
 		{
 			std::cout << "-training external regressor [" << i << "]" << std::endl;
@@ -88,6 +87,11 @@ namespace ESR
 			{
 				currentShapes[j] += predicts[j];
 			}
+
+			// Mat temp;
+			// transformBBox2Image(currentShapes[0], bboxes[0], temp);
+			// dispImgWithDetectionAndLandmarks(images[0], temp, bboxes[0], true);
+
 		}
 		return;
 	}

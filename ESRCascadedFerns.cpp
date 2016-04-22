@@ -41,7 +41,7 @@ namespace ESR
 		   const std::vector<cv::Mat>& targetShapes, 
 		   const std::vector<cv::Mat>& currentShapes)
 	{
-		numRegressor = INTERNAL_REGRESSOR_NUM;
+		numRegressor = NUM_INTERNAL_REGRESSOR;
 		int numTraining = images.size();
 
 		//compute the regression target with respect to the mean shape
@@ -67,7 +67,7 @@ namespace ESR
 		Mat densities, covariance;
 		vector<int> candidateLandmarks;
 		
-		generateCandidatePixels(CANDIDATE_PIXEL_NUM, meanShape, candidatePositions, candidateLandmarks);
+		generateCandidatePixels(NUM_CANDIDATE_PIXEL, meanShape, candidatePositions, candidateLandmarks);
 		computeDensities(images, bboxes, candidateLandmarks, candidatePositions, currentShapes, meanShape, densities);
 		computeCovariance(densities, covariance);
 
@@ -120,10 +120,10 @@ namespace ESR
 			double y = rng.uniform(-1.0,1.0);
 
 			//sampling in an uniform circle
-	        if(x*x + y*y > 1.0){
-	            i--;
-	            continue;
-	        }
+	        // if(x*x + y*y > 1.0){
+	        //     i--;
+	        //     continue;
+	        // }
 
 			//find the nearest landmark in the meanshape
 			double min_dist = 1e10;

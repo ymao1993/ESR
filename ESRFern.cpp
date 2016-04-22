@@ -70,7 +70,7 @@ namespace ESR
 
 	vector<Mat> Fern::train(const Mat& target, const Mat& densities, const Mat& covariance, const Mat& candidatePositions, const std::vector<int>& candidateLandmarks)
 	{
-		numFeature = FERN_FEATURE_NUM;
+		numFeature = NUM_FERN_FEATURE;
 		numLandmark = target.cols/2;
 		numBin = std::pow(2, numFeature);
 		int numTraining = target.rows;

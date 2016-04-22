@@ -1,8 +1,10 @@
 ESRTrain
 ESRTest
-data/myModel.txt
+data/myModel_COFW.txt
+data/myModel_LFPW.txt
 data/COFW_Dataset
 data/old
+data/lfpw
 *.d
 
 # Compiled Object files
