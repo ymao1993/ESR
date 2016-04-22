@@ -4,6 +4,9 @@
 
 C++ implementation of Explicit Shape Regression(ESR) algorithm.
 
+## Pre-trained Model
+Please find the model fire [here](https://www.dropbox.com/s/fb9ctjn1cc653vf/myModel.txt?dl=0). 
+
 ## Dependencies
 + OpenCV2
 
