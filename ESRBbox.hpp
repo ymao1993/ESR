@@ -18,6 +18,24 @@ namespace ESR
 		Bbox(double sx, double sy, double cx, double cy, double w, double h): 
 		sx(sx),sy(sy),cx(cx),cy(cy),w(w),h(h){}
 
+		void scale(float factor)
+		{
+			w *= factor;
+			h *= factor;
+			sx = cx - w/2.0;
+			sy = cy - h/2.0;
+			return;
+		}
+		
+		void translate(double x, double y)
+		{
+			sx += x; 
+			cx += x; 
+			sy += y; 
+			cy += y;
+			return;
+		}
+
 	};
 }
 

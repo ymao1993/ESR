@@ -28,18 +28,23 @@ int main()
 	std::vector<Mat> testImages;
 	std::vector<ESR::Bbox> testingBboxes;
 
+	std::vector<Mat> images;
+
 	//Read testing images
 	for(int i=0; i<NUM_TESTING_IMAGE; i++)
 	{
 		char imageName[100];
 		sprintf(imageName, "image_%04d.png", i+1);
 		std::string filename = std::string(TEST_IMAGE_FOLDER_NAME) + imageName;
-		Mat image = imread(filename,CV_LOAD_IMAGE_GRAYSCALE);
-		if(image.data == NULL)
+		Mat image_original = imread(filename,CV_LOAD_IMAGE_COLOR);
+		if(image_original.data == NULL)
 		{
 			inValidIdx.push_back(i);
 			continue;
 		}
+		Mat image;
+		cvtColor(image_original, image, CV_BGR2GRAY );
+		images.push_back(image_original);
 		testImages.push_back(image);
 	}
 
@@ -70,7 +75,7 @@ int main()
 
 		Mat shape;
 		regressor.predict(testImages[i], testingBboxes[i],shape);
-		ESR::dispImgWithDetectionAndLandmarks(testImages[i], shape, testingBboxes[i], true, true);
+		ESR::dispImgWithDetectionAndLandmarks(images[i], shape, testingBboxes[i], true, true);
 	}
 #endif
 
@@ -87,8 +92,11 @@ int main()
 		 std::vector<ESR::Bbox> faces = faceDetector.detectFace(image_gray);
 		 if(faces.size() != 0) //only perform regression when there is face
 		 {
+		 	faces[0].translate(0, faces[0].h * 0.15);
+		 	faces[0].scale(0.8);
+
 		 	regressor.predict(image_gray, faces[0],shape);
-		 	ESR::dispImgWithDetectionAndLandmarks(image_gray, shape, faces[0], false, false);
+		 	ESR::dispImgWithDetectionAndLandmarks(image, shape, faces[0], false, false);
 		 }
 		 waitKey(10);
 	}

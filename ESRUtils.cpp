@@ -47,7 +47,7 @@ namespace ESR
 	void dispImgWithDetection(const cv::Mat& mat, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat temp = mat.clone();
-		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(0.0,0.0,255.0,1.0));
 
 		dispImg(temp, closeByKey, alwaysNewWindow);
 
@@ -73,7 +73,7 @@ namespace ESR
 		Mat temp = mat.clone();
 		for(int i=0; i<landmarks.rows; i++)
 		{
-			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
+			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(0.0,255.0,0.0,255.0),CV_FILLED);;
 		}
 		dispImg(temp, closeByKey, alwaysNewWindow);
 
@@ -98,12 +98,12 @@ namespace ESR
 	void dispImgWithDetectionAndLandmarks(const cv::Mat& mat, const cv::Mat& landmarks, const Bbox& bbox, bool closeByKey, bool alwaysNewWindow)
 	{
 		Mat temp = mat.clone();
-		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(255.0,0.0,0.0,1.0));
+		rectangle(temp, Point(bbox.sx, bbox.sy), Point(bbox.sx + bbox.w, bbox.sy + bbox.h), Scalar(0.0,0.0,255.0,1.0));
 		for(int i=0; i<landmarks.rows; i++)
 		{
-			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(255.0,0.0,0.0,1.0));
+			circle(temp, Point(landmarks.at<double>(i,0), landmarks.at<double>(i,1)), 3, Scalar(0.0,255.0,0.0,255.0),CV_FILLED);;
 		}
-		dispImg(temp, closeByKey, alwaysNewWindow);
+		dispImg(temp/*(Range(bbox.sy, bbox.sy + bbox.h),Range(bbox.sx, bbox.sx + bbox.w))*/, closeByKey, alwaysNewWindow);
 		return;		
 	}
 
